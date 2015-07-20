@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<template id="car_report_template_id">
+			<t t-call="report.external_layout">
+				<div class="page">
+					<t t-foreach="docs" t-as="o">
+						<div class="row col-xs-12">
+							<div class="col-xs-6">
+								<table style="width: 100%">
+									<thead>
+										<tr>
+											<th style="width: 30%;padding:3px;">Code: </th>
+											<td><span t-field="o.code"/></td>
+										</tr>
+										<tr>
+											<th style="width: 30%;padding:3px;">Name: </th>
+											<td><span t-field="o.name"/></td>
+										</tr>
+										<tr>
+											<th style="width: 30%;padding:3px;">Car Type: </th>
+											<td><span t-field="o.type_id"/></td>
+										</tr>
+										<tr>
+											<th style="width: 30%;padding:3px;">Year: </th>
+											<td><span t-field="o.year"/></td>
+										</tr>
+									</thead>
+								</table>
+							</div>
+							<div class="col-xs-6">
+								<img t-if="o.image_medium" t-att-src="'data:image/png;base64,%s' % o.image_medium" style="height: 200px; width: 300px;"/>
+							</div>
+						</div>
+						
+						<div class="row col-xs-12">
+							<p style="width: 100%; padding-left: 20px" class="text-left"><b>CAR INFORMATION :</b></p>
+							<div class="col-xs-8">
+								<table class="table table-bordered">
+									<thead>
+										<tr>
+											<th style="width: 30%">Color</th>
+											<td><span t-field="o.color_id"/></td>
+										</tr>
+										<tr>
+											<th style="width: 30%">Chassis No</th>
+											<td><span t-field="o.chassis_no"/></td>
+										</tr>
+										<tr>
+											<th style="width: 30%">Case</th>
+											<td><span t-field="o.case"/></td>
+										</tr>
+										<tr>
+											<th style="width: 30%">Number Plates</th>
+											<td><span t-field="o.number_plates"/></td>
+										</tr>
+										<tr>
+											<th style="width: 30%">Transmission</th>
+											<td><span t-field="o.transmission"/></td>
+										</tr>
+										<tr>
+											<th style="width: 30%">Num App</th>
+											<td><span t-field="o.number_app"/></td>
+										</tr>
+										<tr>
+											<th style="width: 30%">Source</th>
+											<td><span t-field="o.source"/></td>
+										</tr>
+										<tr>
+											<th style="width: 30%">Owner</th>
+											<td><span t-field="o.owner_id"/></td>
+										</tr>
+										<tr>
+											<th style="width: 30%">Value</th>
+											<td><span t-field="o.value"/></td>
+										</tr>
+									</thead>
+								</table>
+							</div>
+						</div>
+			     	</t>
+				</div>
+			</t>
+		</template>
+	</data>
+</openerp>

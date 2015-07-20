@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <!--Group Car-->
+        <record model="ir.module.category" id="management_car">
+            <field name="name">Car</field>
+            <field name="description">Car</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <!--Employee-->
+        <record id="group_employee_car" model="res.groups">
+            <field name="name">Employee</field>
+            <field name="category_id" ref="management_car"/>
+            <field name="comment">Employee</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!--Supervisor-->
+        <record id="group_supervisor_car" model="res.groups">
+            <field name="name">Supervisor</field>
+            <field name="category_id" ref="management_car"/>
+            <field name="comment">Supervisor</field>
+            <field name="implied_ids" eval="[(4, ref('group_employee_car'))]"/>
+        </record>
+
+        <!--Admin-->
+        <record id="group_administrator_car" model="res.groups">
+            <field name="name">Admin</field>
+            <field name="category_id" ref="management_car"/>
+            <field name="comment">Admin</field>
+            <field name="implied_ids" eval="[(4, ref('group_supervisor_car'))]"/>
+        </record>
+
+    </data>
+</openerp>

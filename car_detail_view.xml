@@ -1,0 +1,605 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+
+        <menuitem name="Car"
+            id="menu_car"
+            sequence="2" groups="base.group_user"/>
+
+        <menuitem name="Car" parent="menu_car"
+            id="menu_car_management" groups="base.group_user"/>
+
+        <menuitem name="Setting" parent="menu_car"
+            id="menu_car_setting" groups="base.group_user"/>
+
+        <record id="car_car_tree_view" model="ir.ui.view">
+            <field name="name">car.car.tree</field>
+            <field name="model">car.car</field>
+            <field name="arch" type="xml">
+                <tree string="Car">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="type_id"/>
+                    <field name="year"/>
+                    <field name="color_id"/>
+                    <field name="owner_id"/>
+                    <field name="transmission"/>
+                    <field name="state" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="car_car_form_view" model="ir.ui.view">
+            <field name="name">car.car.form</field>
+            <field name="model">car.car</field>
+            <field name="arch" type="xml">
+                <form string="Car" version="7.0">
+                    <sheet>
+                        <group>
+                                <group>
+                                    <field name="code"/>
+                                    <field name="name"/>
+                                    <field name="type_id"/>
+                                    <field name="year"/>
+                                </group>
+                                <group>
+                                    <field name="image_medium" nolabel="1" widget="image" class="oe_avatar oe_left"/>
+                                </group>
+                        </group>
+                        <notebook colspan="4">
+                            <page string="Car Information">
+                                <group>
+                                    <group>
+                                        <field name="color_id"/>
+                                        <field name="chassis_no"/>
+                                        <field name="case"/>
+                                        <field name="number_plates"/>
+                                        <field name="transmission"/>
+                                    </group>
+                                    <group>
+                                        <field name="number_app"/>
+                                        <field name="source"/>
+                                        <field name="owner_id"/>
+                                        <field name="value"/>
+                                        <field name="state" invisible="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="car_car_action_form" model="ir.actions.act_window">
+            <field name="name">Car</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">car.car</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="car_car_tree_view"/>
+        </record>
+        <menuitem action="car_car_action_form" id="menu_car_car_action_form" parent="menu_car_management" sequence="1" groups="group_supervisor_car,group_administrator_car"/>
+
+
+
+        <record id="car_contract_search" model="ir.ui.view">
+            <field name="name">car.contract.search</field>
+            <field name="model">car.contract</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="partner_id"/>
+                    <field name="car_id"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Owner" icon="terp-personal" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="Car" icon="terp-personal" domain="[]" context="{'group_by':'car_id'}"/>
+                    </group>
+               </search>
+            </field>
+        </record>
+
+        <record id="car_contract_tree" model="ir.ui.view">
+            <field name="name">car.contract.tree</field>
+            <field name="model">car.contract</field>
+            <field name="arch" type="xml">
+                <tree string="Car Contract">
+                    <field name="car_id"/>
+                    <field name="date_invoice"/>
+                    <field name="car_value"/>
+                    <field name="commission"/>
+                    <field name="other_value"/>
+                    <field name="validation_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="car_contract_form" model="ir.ui.view">
+            <field name="name">car.contract.form</field>
+            <field name="model">car.contract</field>
+            <field name="arch" type="xml">
+                <form string="Car Contract" version="7.0">
+                    <header>
+                        <button name="validate_car_contract" string="Validate" states="draft" type="object" class="oe_highlight"/>
+                        <button name="action_cancel" string="Cancel Buyer" states="open,paid" type="object" class="oe_highlight"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet string="Car Contract">
+                    <div class="oe_title">
+                        <h1>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="car_id" required="1" on_change="onchange_car(car_id)"/>
+                            <field name="owner_id" on_change="onchange_owner_id(owner_id)"/>
+                            <field name="archive_no"/>
+                        </group>
+                        <group>
+                            <field name="date_invoice"/>
+                            <field name="partner_id"
+                                    context="{'search_default_customer':1, 'show_address': 1}"
+                                    options='{"always_reload": True}'
+                                    domain="[('customer', '=', True)]"/>
+                        </group>
+                    </group>
+                    <separator string="Cash"/>
+                    <group>
+                            <group>
+                            <field name="car_value"/>
+                        </group>
+                        <group>
+                            <field name="commission" required="1"/>
+                            <field name="other_value"/>
+                        </group>
+                    </group>
+                    <separator string="Accounting"/>
+                    <group>
+                        <group>
+                            <field name="acc_car_id"/>
+                            <field name="journal_id" widget="selection"/>
+                            <field name="purchase_id" widget="selection"/>
+                            <field name="customer_invoice_id" invisible="1"/>
+                            <field name="supplier_invoice_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="account_id"/>
+                            <field name="account_owner_id"/>
+                            <field name="acc_comm_id" />
+                            <field name="acc_other_id"/>
+                        </group>
+                    </group>
+                    <separator string="Accounting Feedback"/>
+                    <field name="feedback" class="oe_inline" placeholder="Feedback..."/>
+                    <notebook>
+                        <page string="Other Info">
+                            <group>
+                                <group>
+                                    <field name="partner_bank_id"/>
+                                    <field name="user_id"/>
+                                    <field name="payment_term"/>
+                                </group>
+                                <group>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Payments Buyer">
+                            <field name="payment_buyer_ids" readonly="1"/>
+                        </page>
+                        <page string="Payments Owner">
+                            <field name="payment_owner_ids" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+                </form>
+
+            </field>
+        </record>
+
+        <record id="car_contract_action_form" model="ir.actions.act_window">
+            <field name="name">Car Contract</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">car.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="car_contract_search"/>
+        </record>
+
+        <record id="action_car_contract_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="car_contract_tree"/>
+            <field name="act_window_id" ref="car_contract_action_form"/>
+         </record>
+        <record id="action_car_contract_form" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="car_contract_form"/>
+            <field name="act_window_id" ref="car_contract_action_form"/>
+         </record>
+
+        <menuitem action="car_contract_action_form"
+            id="menu_car_contract_action_form"
+            parent="menu_car_management" sequence="2" groups="group_supervisor_car,group_administrator_car"/>
+
+        <record id="action_vendor_receipt_inherit" model="ir.actions.act_window">
+            <field name="name">Payments Buyer</field>
+            <field name="res_model">account.voucher</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('journal_id.type', 'in', ['bank', 'cash']), ('type','=','receipt')]</field>
+            <field name="context">{'type':'receipt'}</field>
+            <field name="search_view_id" ref="account_voucher.view_voucher_filter_customer_pay"/>
+            <field name="view_id" eval="False"/>
+            <field name="target">current</field>
+        </record>
+
+        <record id="action_vendor_receipt_tree_inherit" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="action_vendor_receipt_inherit"/>
+        </record>
+        <record id="action_vendor_receipt_form_inherit" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account_voucher.view_vendor_receipt_form"/>
+            <field name="act_window_id" ref="action_vendor_receipt_inherit"/>
+        </record>
+
+        <record id="action_vendor_payment_inherit" model="ir.actions.act_window">
+            <field name="name">Payments Owner</field>
+            <field name="res_model">account.voucher</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('journal_id.type', 'in', ['bank', 'cash']), ('type','=','payment')]</field>
+            <field name="context">{'type':'payment'}</field>
+            <field name="view_id" eval="False"/>
+            <field name="search_view_id" ref="account_voucher.view_voucher_filter_vendor_pay"/>
+            <field name="target">current</field>
+        </record>
+        <record id="action_vendor_payment_tree_inherit" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="action_vendor_payment_inherit"/>
+        </record>
+        <record id="action_vendor_payment_form_inherit" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account_voucher.view_vendor_payment_form"/>
+            <field name="act_window_id" ref="action_vendor_payment_inherit"/>
+        </record>
+
+        <!--Payments Buyer-->
+        <menuitem action="action_vendor_receipt_inherit"
+            id="menu_action_vendor_receipt_inherit"
+            parent="menu_car_management" sequence="4" groups="group_supervisor_car,group_administrator_car"/>
+        <!--Payment Owner-->
+        <menuitem action="action_vendor_payment_inherit"
+            id="menu_action_vendor_payment_inherit"
+            parent="menu_car_management" sequence="4" groups="group_supervisor_car,group_administrator_car"/>
+
+
+
+
+
+        <record id="car_entry_search" model="ir.ui.view">
+            <field name="name">car.entry.search</field>
+            <field name="model">car.entry</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="partner_id"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Owner" icon="terp-personal" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="Payment Method" icon="terp-personal" domain="[]"
+                                context="{'group_by':'payment_term'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="car_entry_tree" model="ir.ui.view">
+            <field name="name">car.entry.tree</field>
+            <field name="model">car.entry</field>
+            <field name="arch" type="xml">
+                <tree colors="blue:state == 'draft';black:state in ('proforma','proforma2','open');gray:state == 'cancel'"
+                      string="Car Entry">
+                    <field name="other_value"/>
+                    <field name="car_id"/>
+                    <field name="date_invoice"/>
+                    <field name="partner_id"/>
+                    <field name="car_value"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="car_entry_form" model="ir.ui.view">
+            <field name="name">car.entry.form</field>
+            <field name="model">car.entry</field>
+            <field name="arch" type="xml">
+                <form string="Car Entry" version="7.0">
+                    <header>
+                        <button type="object" string="Send by Email"/>
+                        <button string="Validate" type="object" states="draft" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>
+                    </header>
+                    <sheet string="Car Entry">
+                        <div class="oe_title">
+                            <h1>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="car_id" on_change="onchange_car_entry(car_id)"
+                                       domain="[('state', 'in', ('available', 'contract'))]"/>
+                                <field string="Customer" name="partner_id"
+                                       context="{'search_default_customer':1, 'show_address': 1}"
+                                       options='{"always_reload": True}'
+                                       domain="[('customer', '=', True)]"/>
+                                <field name="other_value" string="Car Value" required="1"/>
+                                <field name="date_invoice"/>
+                            </group>
+                            <group>
+                                <field name="journal_id"
+                                       widget="selection"/>
+                                <field name="account_id"/>
+                                <field name="acc_other_id" string="Account Process" required="1"/>
+                                <div>
+                                </div>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Other Info">
+	                            <group>
+	                                <group>
+	                                    <field name="partner_bank_id"/>
+	                                    <field name="user_id"/>
+	                                    <field name="payment_term"/>
+	                                </group>
+	                                <group>
+	                                </group>
+	                            </group>
+                            </page>
+                            <page string="Payments">
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="car_entry_action_form" model="ir.actions.act_window">
+            <field name="name">Car Entry</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">car.entry</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="car_entry_search"/>
+        </record>
+
+        <record id="action_car_entry_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="car_entry_tree"/>
+            <field name="act_window_id" ref="car_entry_action_form"/>
+        </record>
+
+        <record id="action_car_entry_form" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="car_entry_form"/>
+            <field name="act_window_id" ref="car_entry_action_form"/>
+        </record>
+
+
+        <!--Car Entry-->
+        <menuitem action="car_entry_action_form"
+            id="menu_car_entry_action_form"
+            parent="menu_car_management" sequence="3" groups="group_supervisor_car,group_administrator_car"/>
+
+        <record id="car_type_tree_view" model="ir.ui.view">
+            <field name="name">car.type.tree</field>
+            <field name="model">car.type</field>
+            <field name="arch" type="xml">
+                <tree string="Car Type">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="car_type_form_view" model="ir.ui.view">
+            <field name="name">car.type.form</field>
+            <field name="model">car.type</field>
+            <field name="arch" type="xml">
+                <form string="Car Type">
+                    <field name="name"/>
+                </form>
+            </field>
+        </record>
+
+        <record id="car_type_action_form" model="ir.actions.act_window">
+            <field name="name">Car Type</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">car.type</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="car_type_tree_view"/>
+        </record>
+
+        <!--Configuration car type-->
+        <menuitem action="car_type_action_form"
+            id="menu_car_type_action_form"
+            parent="menu_car_setting" sequence="2" groups="group_administrator_car"/>
+
+
+        <record id="car_color_tree_view" model="ir.ui.view">
+            <field name="name">car.color.tree</field>
+            <field name="model">car.color</field>
+            <field name="arch" type="xml">
+                <tree string="Car Color">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="car_color_form_view" model="ir.ui.view">
+            <field name="name">car.color.form</field>
+            <field name="model">car.color</field>
+            <field name="arch" type="xml">
+                <form string="Car Color">
+                    <field name="name"/>
+                </form>
+            </field>
+        </record>
+
+        <record id="car_color_action_form" model="ir.actions.act_window">
+            <field name="name">Car Color</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">car.color</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="car_color_tree_view"/>
+        </record>
+
+        <!--Configuration car color-->
+        <menuitem action="car_color_action_form"
+            id="menu_car_color_action_form"
+            parent="menu_car_setting" sequence="3" groups="group_administrator_car"/>
+
+
+
+        <record id="setting_car_contract_tree_view" model="ir.ui.view">
+            <field name="name">setting.car.contract.tree</field>
+            <field name="model">setting.car.contract</field>
+            <field name="arch" type="xml">
+                <tree string="Setting Car Contract">
+                    <field name="sequence_id"/>
+                    <field name="journal_id"/>
+                    <field name="purchase_id"/>
+                    <field name="acc_car_id"/>
+                    <field name="acc_comm_id"/>
+                    <field name="acc_other_id"/>
+                    <field name="active_setting"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="setting_car_contract_form_view" model="ir.ui.view">
+            <field name="name">setting.car.contract.form</field>
+            <field name="model">setting.car.contract</field>
+            <field name="arch" type="xml">
+                <form string="Setting Car Contract" version="7.0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="sequence_id"/>
+                                <field name="journal_id" required="1"/>
+                                <field name="purchase_id" required="1"/>
+                                <field name="active_setting"/>
+                            </group>
+                            <group>
+                                <field name="acc_car_id" required="1"/>
+                                <field name="acc_comm_id" required="1"/>
+                                <field name="acc_other_id" required="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="setting_car_contract_action_form" model="ir.actions.act_window">
+            <field name="name">Setting Car Contract</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">setting.car.contract</field>
+            <field name="view_type">form</field>
+            <field name="context">{'type': 'contract'}</field>
+            <field name="domain">[('type','=', 'contract')]</field>
+        </record>
+
+        <record id="action_setting_car_contract_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="setting_car_contract_tree_view"/>
+            <field name="act_window_id" ref="setting_car_contract_action_form"/>
+         </record>
+
+        <record id="action_setting_car_contract_form" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="setting_car_contract_form_view"/>
+            <field name="act_window_id" ref="setting_car_contract_action_form"/>
+         </record>
+
+        <menuitem action="setting_car_contract_action_form"
+            id="menu_setting_car_contract_action_form"
+            parent="menu_car_setting" sequence="4" groups="group_administrator_car"/>
+
+        <record id="setting_car_entry_tree_view" model="ir.ui.view">
+            <field name="name">setting.car.entry.tree</field>
+            <field name="model">setting.car.contract</field>
+            <field name="arch" type="xml">
+                <tree string="Setting Car Entry">
+                    <field name="sequence_id"/>
+                    <field name="journal_id"/>
+                    <field name="acc_other_id" string="Account Process"/>
+                    <field name="active_setting"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="setting_car_entry_form_view" model="ir.ui.view">
+            <field name="name">setting.car.entry.form</field>
+            <field name="model">setting.car.contract</field>
+            <field name="arch" type="xml">
+                <form string="Setting Car Entry" version="7.0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="sequence_id"/>
+                                <field name="journal_id"/>
+                            </group>
+                            <group>
+                                <field name="acc_other_id" string="Account Process"/>
+                                <field name="active_setting"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="setting_car_entry_action_form" model="ir.actions.act_window">
+            <field name="name">Setting Car Entry</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">setting.car.contract</field>
+            <field name="view_type">form</field>
+            <field name="context">{'type': 'entry'}</field>
+            <field name="domain">[('type','=', 'entry')]</field>
+        </record>
+
+        <record id="action_setting_car_entry_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="setting_car_entry_tree_view"/>
+            <field name="act_window_id" ref="setting_car_entry_action_form"/>
+         </record>
+
+        <record id="action_setting_car_entry_form" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="setting_car_entry_form_view"/>
+            <field name="act_window_id" ref="setting_car_entry_action_form"/>
+         </record>
+
+
+        <menuitem action="setting_car_entry_action_form"
+            id="menu_setting_car_entry_action_form"
+            parent="menu_car_setting" sequence="5" groups="group_administrator_car"/>
+
+	</data>
+</openerp>
