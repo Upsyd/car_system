@@ -2,10 +2,6 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_car_car,car.car,model_car_car,base.group_user,1,0,0,0
 access_car_contract,car.contract,model_car_contract,group_supervisor_car,1,1,1,0
 access_car_entry,car.entry,model_car_entry,group_supervisor_car,1,1,1,0
-access_account_voucher,account.voucher,model_account_voucher,group_supervisor_car,1,1,1,0
-access_account_journal,account.journal,account.model_account_invoice,group_supervisor_car,1,1,1,0
-access_account_invoice_tax,account.invoice.tax,account.model_account_invoice_tax,group_supervisor_car,1,1,1,0
-access_account_voucher_line,account.voucher.line,account_voucher.model_account_voucher_line,group_supervisor_car,1,1,1,0
 access_car_color,car.color,model_car_color,base.group_user,1,0,0,0
 access_car_type,car.type,model_car_type,base.group_user,1,0,0,0
 access_setting_car_contract,setting.car.contract,model_setting_car_contract,base.group_user,1,0,0,0
